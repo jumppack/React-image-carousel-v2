@@ -74,9 +74,9 @@
   top: 50%;
   left: 50%;
 
-  width: 280px;
+  width: 300px;
   height: 200px;
-  border-radius: 14px;
+  border-radius: 10px;
   overflow: hidden;   /* clips the image to the rounded corners */
 
   /*

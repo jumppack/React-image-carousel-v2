@@ -42,20 +42,20 @@ const getSlideStyle = (offset) => {
        * brightness(0.50) darkens it so it reads as receded.
        */
       return {
-        transform:  `translate(calc(-50% + ${sign * 200}px), -43%) scale(0.50)`,
+        transform:  `translate(calc(-50% + ${sign * 150}px), -50%) scale(0.80)`,
         opacity:    0.78,
         zIndex:     5,
-        filter:     'brightness(0.50)',
+        filter:     'brightness(0.40)',
         boxShadow:  '0 8px 24px rgba(0, 0, 0, 0.55)',
       };
 
     /* ── Outer edge (±2) ─────────────────────────────────── */
     case 2:
       return {
-        transform:  `translate(calc(-50% + ${sign * 330}px), -38%) scale(0.40)`,
+        transform:  `translate(calc(-50% + ${sign * 250}px), -50%) scale(0.50)`,
         opacity:    0.38,
         zIndex:     2,
-        filter:     'brightness(0.30)',
+        filter:     'brightness(0.20)',
         boxShadow:  '0 4px 10px rgba(0, 0, 0, 0.40)',
       };
 
