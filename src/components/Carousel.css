@@ -1,0 +1,197 @@
+/* =============================================================
+   Carousel.css — styles scoped to the Carousel component only
+   ============================================================= */
+
+/* ── Outer wrapper ───────────────────────────────────────── */
+.carousel-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  padding: 30px 0 40px;
+}
+
+/* ── Viewport — clips & soft-fades the track edges ────────── */
+.carousel-viewport {
+  /*
+   * position:relative so absolutely-positioned slides inside
+   * the track use this element as their containing block.
+   * overflow:hidden clips slides that slide off the edges.
+   */
+  position: relative;
+  width: min(780px, 90vw);
+  /*
+   * Height must comfortably hold the center card (200px)
+   * plus its drop-shadow. 260px gives the shadow room to breathe.
+   */
+  height: 260px;
+  overflow: hidden;
+
+  /*
+   * The mask fades the left and right edges to transparent.
+   * This makes the outermost cards dissolve elegantly rather
+   * than hard-clipping against the viewport border.
+   */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 12%,
+    black 88%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 12%,
+    black 88%,
+    transparent 100%
+  );
+}
+
+/* ── Track — anchor point for all absolutely-placed slides ── */
+.carousel-track {
+  /*
+   * position:relative so children's top/left percentages refer
+   * to THIS element's dimensions (which matches .carousel-viewport).
+   */
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Individual slide card ───────────────────────────────── */
+.carousel-slide {
+  /*
+   * All slides share the same anchor: top:50% / left:50%.
+   * Their inline transform (set by getSlideStyle) contains
+   * translate(-50%, ...) to correct for the offset.
+   * This single anchor means every card's CSS transition
+   * animates from the OLD transform to the NEW one —
+   * producing the real "slide into place" motion.
+   */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  width: 280px;
+  height: 200px;
+  border-radius: 14px;
+  overflow: hidden;   /* clips the image to the rounded corners */
+
+  /*
+   * TRANSITION — the heart of the animation.
+   *
+   * transform covers translateX/Y and scale simultaneously,
+   * so the card glides sideways AND grows/shrinks in one motion.
+   *
+   * cubic-bezier(0.35, 0, 0.25, 1) is Material Design's
+   * "standard" curve: fast start, smooth ease-out.
+   * This matches the "next card rushes in" feel of Android carousels.
+   *
+   * filter covers brightness, making the card brighten/darken
+   * as it moves into or out of the center spot.
+   */
+  transition:
+    transform  0.55s cubic-bezier(0.35, 0, 0.25, 1),
+    opacity    0.45s ease,
+    filter     0.45s ease,
+    box-shadow 0.45s ease;
+
+  /*
+   * will-change hints the browser to promote this element to
+   * its own GPU layer, preventing any jank during the transition.
+   */
+  will-change: transform, opacity, filter;
+}
+
+/* ── Image fill ──────────────────────────────────────────── */
+.carousel-slide__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   /* fills card, crops if necessary */
+  display: block;
+  border-radius: inherit;
+  /* Prevent the browser's native image-drag ghost from appearing */
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ── Caption (only rendered on center slide) ─────────────── */
+.carousel-slide__caption {
+  /*
+   * position:absolute removes it from normal flow, overlaying
+   * the bottom of the image. This is why .carousel-slide needs
+   * position:relative (via overflow:hidden it already has
+   * a stacking context, so this works).
+   */
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 0.78rem;
+  /* Only round the bottom corners to match the card */
+  border-radius: 0 0 14px 14px;
+}
+
+.carousel-slide__author {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 62%;
+}
+
+.carousel-slide__indicator {
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* ── Navigation buttons ──────────────────────────────────── */
+.carousel-btn {
+  /*
+   * Use flex to centre the › ‹ glyph — more reliable than
+   * line-height which can shift under different font sizes.
+   */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* flex-shrink:0 stops the button from squishing when the
+     viewport is narrow and the flex gap is applied */
+  flex-shrink: 0;
+
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+  /* Prevent accidental text selection on rapid clicks */
+  user-select: none;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.carousel-btn:hover  { background: rgba(255, 255, 255, 0.22); transform: scale(1.1); }
+.carousel-btn:active { transform: scale(0.93); }
+
+/* ── Status messages (loading / error / empty) ───────────── */
+.carousel-status {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.carousel-status--error { color: #ff6b6b; }

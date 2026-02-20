@@ -1,0 +1,15 @@
+/* ============================================
+   App Component Styles
+   Styles scoped to elements rendered by App.jsx
+   ============================================ */
+
+/* .card wraps the <Carousel /> component in App.jsx */
+.card {
+  padding: 2em;
+}
+
+/* .read-the-docs is used by the <p> tag in App.jsx */
+.read-the-docs {
+  color: rgb(221, 221, 221);
+  text-align: center;
+}
