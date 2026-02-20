@@ -1,27 +1,46 @@
 # React Image Carousel v2
 
-A polished **3-image depth carousel** built with React and Vite. Inspired by Android's coverflow-style UI, it keeps three photos on screen simultaneously — with the **center image twice the size** of the flanking ones — and uses smooth CSS transitions to physically slide images into place when navigating.
+A **3-image depth carousel** built with React and Vite. Inspired by Android's coverflow UI — the center image is always the dominant focal point, with flanking images visibly receding behind it. Navigation slides images smoothly into place using CSS transitions driven by React state.
+
+---
+
+## Screenshots
+
+| Initial state | After navigating |
+|:---:|:---:|
+| ![Carousel — image 1 of 15](docs/screenshot-1.png) | ![Carousel — image 3 of 15](docs/screenshot-2.png) |
 
 ---
 
 ## ✨ Features
 
-### 🎠 3-Image Fan Carousel
-The carousel always shows **three images at once**: left, center, and right. The center image is the focal point — it is **2× larger, fully bright, and elevated** (higher z-index + drop shadow). Side images are scaled down to 50%, dimmed with a brightness filter, and sit visually *behind* the center card, giving a natural depth-of-field feel.
+### 🎠 3-Image Fan Layout
+Three images are always on screen — left, center, right. The center image is the focal point:
 
-### 🎬 Smooth Slide Animation
-Clicking **‹** or **›** triggers a real CSS transition — images physically glide from one slot to the next. This works because each image is keyed to its own DOM node (`key={image.id}`), so when `currentIndex` changes the browser animates the `transform` change frame-by-frame rather than snapping to a new layout. The easing uses Material Design's standard curve (`cubic-bezier(0.35, 0, 0.25, 1)`) for a snappy, tactile feel.
+| Slot | Scale | Brightness | z-index |
+|------|-------|------------|---------|
+| Center | `1.3×` (dominant) | `100%` | `10` |
+| Side (±1) | `0.80×` | `40%` | `5` |
+| Edge (±2) | `0.50×` | `20%` | `2` |
+
+Side cards are also dimmed with `filter: brightness()` on top of `opacity`, reinforcing the sense that they are physically behind the center card.
+
+### 🎬 Real Sliding Animation
+Each image is keyed by its unique `image.id` — the same DOM node persists across React re-renders. When `currentIndex` changes, each slide's inline `transform` style updates and the CSS `transition` fires automatically, animating the card between its old and new position.
+
+The easing `cubic-bezier(0.35, 0, 0.25, 1)` (Material Design "standard") gives a snappy start and smooth landing — matching the feel of Android carousels.
 
 ### ♾️ Infinite Loop
-Navigation wraps seamlessly in both directions. Pressing **›** from the last image transitions to the first, and pressing **‹** from the first transitions to the last — with no jump or flash.
+Navigation wraps seamlessly in both directions using shortest-path modular arithmetic, so the wrap-around animation always takes one step — never the long way round.
 
 ### 🌐 Live Image Fetching
-Images are fetched from the [Lorem Picsum](https://picsum.photos) REST API via `fetch` inside a `useEffect` hook. A loading state is shown while the request is in flight, and an error state is shown if the fetch fails.
+Images are fetched from the [Lorem Picsum](https://picsum.photos) API. Loading, error, and empty states are all handled gracefully.
 
 ### ♿ Accessible
-- `aria-label` on both navigation buttons
-- `aria-live="polite"` on the carousel viewport (screen readers announce image changes)
-- `aria-hidden={true}` on non-center slides
+- `aria-label` on both nav buttons
+- `aria-live="polite"` + `aria-atomic="true"` on the viewport
+- `aria-hidden={true}` on all non-center slides
+- `loading="lazy"` on side images, `loading="eager"` on the center
 
 ---
 
@@ -30,35 +49,25 @@ Images are fetched from the [Lorem Picsum](https://picsum.photos) REST API via `
 ```
 src/
 ├── components/
-│   ├── Carousel.jsx   # 3-image carousel — fetch, state, render
-│   └── Carousel.css   # slide transforms, transitions, depth effect
-├── App.jsx            # mounts <Carousel />, passes API url + limit
-├── App.css            # app-level styles (.card, .read-the-docs)
-├── index.css          # global styles (:root, body, #root)
+│   ├── Carousel.jsx   # fetch, state, slide position logic
+│   └── Carousel.css   # transforms, transitions, depth effect, edge mask
+├── App.jsx            # mounts <Carousel url limit />
+├── App.css            # .card, .read-the-docs
+├── index.css          # :root, body, #root globals
 └── index.jsx          # React DOM entry point
+docs/
+├── screenshot-1.png   # Initial carousel state
+└── screenshot-2.png   # After navigating
 ```
 
 ---
 
 ## 🚀 Getting Started
 
-### Prerequisites
-- Node.js ≥ 18
-- npm ≥ 9
-
-### Install & Run
-
 ```bash
 npm install
 npm run dev
-```
-
-Open [http://localhost:5173](http://localhost:5173) in your browser.
-
-### Build for Production
-
-```bash
-npm run build
+# → http://localhost:5173
 ```
 
 ---
@@ -67,21 +76,7 @@ npm run build
 
 | Tool | Purpose |
 |------|---------|
-| [React 19](https://react.dev) | UI library |
+| [React 19](https://react.dev) | UI + state |
 | [Vite 7](https://vitejs.dev) | Dev server & bundler |
-| Vanilla CSS | Component-scoped styles, transitions |
-| [Lorem Picsum API](https://picsum.photos/v2/list) | Free stock photo source |
-
----
-
-## 🎨 How the Depth Effect Works
-
-Each slide is `position: absolute` anchored at `top: 50%; left: 50%` inside the track. An inline `transform` style is computed per-slide based on its offset from the current center:
-
-| Position | `scale` | `brightness` | `z-index` |
-|----------|---------|-------------|---------|
-| Center (0) | `1.3` | `100%` | `10` |
-| Side (±1) | `0.50` | `50%` | `5` |
-| Edge (±2) | `0.40` | `30%` | `2` |
-
-When `currentIndex` updates, React keeps the same DOM node for each image and updates its inline style — the CSS `transition` on `transform`, `opacity`, `filter`, and `box-shadow` fires automatically, producing the sliding depth animation.
+| Vanilla CSS | Transitions, depth effect, edge mask |
+| [Lorem Picsum API](https://picsum.photos/v2/list) | Free stock photos |
