@@ -93,7 +93,7 @@
    * as it moves into or out of the center spot.
    */
   transition:
-    transform  0.55s cubic-bezier(0.35, 0, 0.25, 1),
+    transform  0.55s cubic-bezier(0.35, 0, 0.25, 1), /* snappy start, soft landing*/
     opacity    0.45s ease,
     filter     0.45s ease,
     box-shadow 0.45s ease;
