@@ -4,11 +4,17 @@ A **3-image depth carousel** built with React and Vite. Inspired by Android's co
 
 ---
 
-## Screenshots
+## Demo
 
-| Initial state | After navigating |
-|:---:|:---:|
-| ![Carousel — image 1 of 15](docs/screenshot-1.png) | ![Carousel — image 3 of 15](docs/screenshot-2.png) |
+![Animated demo of the carousel navigating through 5 images](docs/carousel.gif)
+
+> Center image is the dominant focal point — side images scale down and darken to create depth.
+
+---
+
+## Screenshot
+
+![Carousel initial state — image 1 of 15](docs/screenshot-1.png)
 
 ---
 
